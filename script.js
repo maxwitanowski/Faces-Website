@@ -105,10 +105,16 @@ function initDownloadDropdown() {
             e.stopPropagation();
             dropdown.classList.toggle('open');
         } else {
-            // Click on main button - trigger download
+            // Click on main button - open dependency modal
             e.stopPropagation();
             dropdown.classList.remove('open');
-            window.location.href = platforms[currentPlatform].download;
+            // Open dependency modal if it exists
+            const depModal = document.getElementById('depModal');
+            if (depModal) {
+                depModal.classList.add('open');
+            } else {
+                window.location.href = platforms[currentPlatform].download;
+            }
         }
     });
 
@@ -765,23 +771,11 @@ function initDependencyModal() {
         });
     });
 
-    // Override download button clicks to show modal
-    const downloadBtn = document.getElementById('downloadBtn');
+    // Hero download button opens modal
     const heroDownloadBtn = document.getElementById('heroDownloadBtn');
-
-    if (downloadBtn) {
-        // Remove the default click behavior and show modal instead
-        downloadBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openDepModal();
-        });
-    }
-
     if (heroDownloadBtn) {
         heroDownloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             openDepModal();
         });
     }
