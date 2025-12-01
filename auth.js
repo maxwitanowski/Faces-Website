@@ -1,31 +1,22 @@
-// Authentication System for Faces Website
+// Authentication System for Faces Website (API Version)
+const API_URL = window.location.origin;
+
 const AUTH = {
     // Creator/Admin email
     CREATOR_EMAIL: 'maxwitanowski@gmail.com',
 
-    // Get all users from localStorage
-    getUsers() {
-        const users = localStorage.getItem('faces_users');
-        return users ? JSON.parse(users) : [];
-    },
-
-    // Save users to localStorage
-    saveUsers(users) {
-        localStorage.setItem('faces_users', JSON.stringify(users));
-    },
-
-    // Get current logged in user
+    // Get current logged in user from sessionStorage
     getCurrentUser() {
-        const user = localStorage.getItem('faces_current_user');
+        const user = sessionStorage.getItem('faces_current_user');
         return user ? JSON.parse(user) : null;
     },
 
     // Set current user
     setCurrentUser(user) {
         if (user) {
-            localStorage.setItem('faces_current_user', JSON.stringify(user));
+            sessionStorage.setItem('faces_current_user', JSON.stringify(user));
         } else {
-            localStorage.removeItem('faces_current_user');
+            sessionStorage.removeItem('faces_current_user');
         }
     },
 
@@ -41,50 +32,49 @@ const AUTH = {
     },
 
     // Sign up new user
-    signUp(name, email, password) {
-        const users = this.getUsers();
+    async signUp(name, email, password) {
+        try {
+            const response = await fetch(`${API_URL}/api/auth/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
 
-        // Check if email already exists
-        if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
-            return { success: false, error: 'Email already registered' };
+            const data = await response.json();
+
+            if (!response.ok) {
+                return { success: false, error: data.error };
+            }
+
+            this.setCurrentUser(data.user);
+            return { success: true, user: data.user };
+        } catch (err) {
+            console.error('Signup error:', err);
+            return { success: false, error: 'Network error. Please try again.' };
         }
-
-        // Create new user
-        const newUser = {
-            id: Date.now().toString(),
-            name: name.trim(),
-            email: email.toLowerCase().trim(),
-            password: password, // In production, this should be hashed
-            createdAt: new Date().toISOString(),
-            isCreator: this.isCreator(email)
-        };
-
-        users.push(newUser);
-        this.saveUsers(users);
-
-        // Auto sign in
-        this.setCurrentUser(newUser);
-
-        return { success: true, user: newUser };
     },
 
     // Sign in existing user
-    signIn(email, password) {
-        const users = this.getUsers();
-        const user = users.find(u =>
-            u.email.toLowerCase() === email.toLowerCase().trim() &&
-            u.password === password
-        );
+    async signIn(email, password) {
+        try {
+            const response = await fetch(`${API_URL}/api/auth/signin`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-        if (!user) {
-            return { success: false, error: 'Invalid email or password' };
+            const data = await response.json();
+
+            if (!response.ok) {
+                return { success: false, error: data.error };
+            }
+
+            this.setCurrentUser(data.user);
+            return { success: true, user: data.user };
+        } catch (err) {
+            console.error('Signin error:', err);
+            return { success: false, error: 'Network error. Please try again.' };
         }
-
-        // Update isCreator status in case it changed
-        user.isCreator = this.isCreator(user.email);
-        this.setCurrentUser(user);
-
-        return { success: true, user };
     },
 
     // Sign out
@@ -206,12 +196,17 @@ const AuthUI = {
     },
 
     // Handle form submission
-    handleSubmit() {
+    async handleSubmit() {
         const modal = document.getElementById('authModal');
         const mode = modal.dataset.mode;
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
         const errorEl = document.getElementById('authError');
+        const submitBtn = document.querySelector('.auth-submit-btn');
+
+        // Disable button during request
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Please wait...';
 
         let result;
 
@@ -220,11 +215,13 @@ const AuthUI = {
             if (!name) {
                 errorEl.textContent = 'Please enter your name';
                 errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
                 return;
             }
-            result = AUTH.signUp(name, email, password);
+            result = await AUTH.signUp(name, email, password);
         } else {
-            result = AUTH.signIn(email, password);
+            result = await AUTH.signIn(email, password);
         }
 
         if (result.success) {
@@ -235,6 +232,8 @@ const AuthUI = {
         } else {
             errorEl.textContent = result.error;
             errorEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = mode === 'signin' ? 'Sign In' : 'Sign Up';
         }
     },
 

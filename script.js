@@ -319,6 +319,7 @@ function initReviews() {
 
     if (!reviewForm) return;
 
+    const API_URL = window.location.origin;
     let selectedRating = 0;
 
     // Check if user is creator (uses AUTH from auth.js)
@@ -336,17 +337,6 @@ function initReviews() {
         return typeof AUTH !== 'undefined' ? AUTH.getCurrentUser() : null;
     }
 
-    // Get reviews from localStorage
-    function getReviews() {
-        const reviews = localStorage.getItem('faces_reviews');
-        return reviews ? JSON.parse(reviews) : [];
-    }
-
-    // Save reviews to localStorage
-    function saveReviews(reviews) {
-        localStorage.setItem('faces_reviews', JSON.stringify(reviews));
-    }
-
     // Format date
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -360,20 +350,38 @@ function initReviews() {
         return div.innerHTML;
     }
 
+    // Fetch reviews from API
+    async function fetchReviews() {
+        try {
+            const response = await fetch(`${API_URL}/api/reviews`);
+            return await response.json();
+        } catch (err) {
+            console.error('Error fetching reviews:', err);
+            return [];
+        }
+    }
+
     // Delete review (admin only)
-    window.deleteReview = function(index) {
+    window.deleteReview = async function(reviewId) {
         if (!canDelete()) return;
         if (!confirm('Are you sure you want to delete this review?')) return;
 
-        const reviews = getReviews();
-        reviews.splice(index, 1);
-        saveReviews(reviews);
-        renderReviews();
+        const user = getCurrentUser();
+        try {
+            await fetch(`${API_URL}/api/reviews/${reviewId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userEmail: user.email })
+            });
+            renderReviews();
+        } catch (err) {
+            console.error('Error deleting review:', err);
+        }
     };
 
     // Render reviews
-    function renderReviews() {
-        const reviews = getReviews();
+    async function renderReviews() {
+        const reviews = await fetchReviews();
         const userCanDelete = canDelete();
 
         if (reviews.length === 0) {
@@ -385,8 +393,8 @@ function initReviews() {
         reviewsGrid.style.display = 'flex';
         reviewsEmpty.style.display = 'none';
 
-        reviewsGrid.innerHTML = reviews.map((review, index) => {
-            const reviewIsCreator = review.userEmail && isCreator(review.userEmail);
+        reviewsGrid.innerHTML = reviews.map((review) => {
+            const reviewIsCreator = review.user_email && isCreator(review.user_email);
             return `
             <div class="review-card ${reviewIsCreator ? 'creator-review' : ''}">
                 <div class="review-header">
@@ -397,7 +405,7 @@ function initReviews() {
                                 ${escapeHtml(review.name)}
                                 ${reviewIsCreator ? '<span class="creator-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Creator</span>' : ''}
                             </span>
-                            <span class="author-date">${formatDate(review.date)}</span>
+                            <span class="author-date">${formatDate(review.created_at)}</span>
                         </div>
                     </div>
                     <div class="review-actions-header">
@@ -405,7 +413,7 @@ function initReviews() {
                             ${'<span>★</span>'.repeat(review.rating)}${'<span style="color: var(--text-muted);">★</span>'.repeat(5 - review.rating)}
                         </div>
                         ${userCanDelete ? `
-                        <button class="delete-btn" onclick="deleteReview(${index})" title="Delete review">
+                        <button class="delete-btn" onclick="deleteReview(${review.id})" title="Delete review">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -474,7 +482,7 @@ function initReviews() {
     }
 
     // Form submission
-    reviewForm.addEventListener('submit', (e) => {
+    reviewForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -501,24 +509,30 @@ function initReviews() {
             return false;
         }
 
-        const reviews = getReviews();
-        reviews.unshift({
-            name: user.name,
-            userEmail: user.email,
-            userId: user.id,
-            text,
-            rating: selectedRating,
-            date: new Date().toISOString()
-        });
-        saveReviews(reviews);
+        try {
+            await fetch(`${API_URL}/api/reviews`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: user.id,
+                    name: user.name,
+                    userEmail: user.email,
+                    text,
+                    rating: selectedRating
+                })
+            });
 
-        // Reset form
-        reviewText.value = '';
-        selectedRating = 0;
-        updateStars();
-        charCount.textContent = '0';
+            // Reset form
+            reviewText.value = '';
+            selectedRating = 0;
+            updateStars();
+            charCount.textContent = '0';
 
-        renderReviews();
+            renderReviews();
+        } catch (err) {
+            console.error('Error submitting review:', err);
+            alert('Error submitting review. Please try again.');
+        }
 
         return false;
     });
