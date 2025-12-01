@@ -822,6 +822,46 @@ body {
     opacity: 0.8;
 }
 
+.macos-warning {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(255, 149, 0, 0.1);
+    border: 1px solid rgba(255, 149, 0, 0.3);
+    border-radius: 12px;
+    max-width: 400px;
+}
+
+.macos-warning p {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.macos-warning p:last-child {
+    margin-bottom: 0;
+}
+
+.macos-warning strong {
+    color: #ff9500;
+}
+
+.macos-warning code {
+    display: block;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #a5d6ff;
+    margin: 8px 0;
+    word-break: break-all;
+}
+
+.macos-warning small {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
 /* About Section */
 .about {
     padding: 120px 0;

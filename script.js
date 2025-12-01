@@ -48,6 +48,9 @@ function initDownloadDropdown() {
     const detectedPlatform = detectPlatform();
     let currentPlatform = detectedPlatform;
 
+    // macOS warning element
+    const macosWarning = document.getElementById('macosWarning');
+
     // Update UI for detected platform
     function updatePlatformUI(platform) {
         const data = platforms[platform];
@@ -55,6 +58,11 @@ function initDownloadDropdown() {
         platformName.textContent = data.name;
         downloadNote.textContent = data.note;
         currentPlatform = platform;
+
+        // Show/hide macOS warning
+        if (macosWarning) {
+            macosWarning.style.display = platform === 'macos' ? 'block' : 'none';
+        }
     }
 
     updatePlatformUI(detectedPlatform);
