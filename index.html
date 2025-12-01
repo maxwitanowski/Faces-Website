@@ -583,6 +583,107 @@
         </div>
     </section>
 
+    <!-- Dependency Selection Modal -->
+    <div class="dep-modal" id="depModal">
+        <div class="dep-modal-content">
+            <button class="dep-close-btn" id="closeDepModal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="dep-header">
+                <h2>Download <span class="gradient-text">Faces AI</span></h2>
+                <p>Select which AI features to include in your download</p>
+            </div>
+            <div class="dep-list">
+                <label class="dep-item">
+                    <div class="dep-checkbox">
+                        <input type="checkbox" id="depKokoro" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div class="dep-info">
+                        <div class="dep-title">
+                            <span>Kokoro TTS</span>
+                            <span class="dep-badge recommended">Recommended</span>
+                        </div>
+                        <p class="dep-desc">High-quality text-to-speech for natural AI voice responses</p>
+                        <a href="#" class="dep-learn-more" data-dep="kokoro">Learn more</a>
+                    </div>
+                </label>
+                <label class="dep-item">
+                    <div class="dep-checkbox">
+                        <input type="checkbox" id="depWhisper" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div class="dep-info">
+                        <div class="dep-title">
+                            <span>Whisper STT</span>
+                            <span class="dep-badge recommended">Recommended</span>
+                        </div>
+                        <p class="dep-desc">OpenAI's speech-to-text for accurate voice recognition</p>
+                        <a href="#" class="dep-learn-more" data-dep="whisper">Learn more</a>
+                    </div>
+                </label>
+                <label class="dep-item">
+                    <div class="dep-checkbox">
+                        <input type="checkbox" id="depYolo" checked>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div class="dep-info">
+                        <div class="dep-title">
+                            <span>YOLO 11</span>
+                            <span class="dep-badge recommended">Recommended</span>
+                        </div>
+                        <p class="dep-desc">Real-time object detection for face tracking and vision features</p>
+                        <a href="#" class="dep-learn-more" data-dep="yolo">Learn more</a>
+                    </div>
+                </label>
+                <label class="dep-item">
+                    <div class="dep-checkbox">
+                        <input type="checkbox" id="depPiper">
+                        <span class="checkmark"></span>
+                    </div>
+                    <div class="dep-info">
+                        <div class="dep-title">
+                            <span>Piper TTS</span>
+                            <span class="dep-badge optional">Optional</span>
+                        </div>
+                        <p class="dep-desc">Alternative lightweight text-to-speech engine</p>
+                        <a href="#" class="dep-learn-more" data-dep="piper">Learn more</a>
+                    </div>
+                </label>
+            </div>
+            <div class="dep-footer">
+                <p class="dep-size">Estimated download size: <span id="depSize">~450 MB</span></p>
+                <button class="btn btn-primary dep-download-btn" id="depDownloadBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Faces AI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dependency Info Modal -->
+    <div class="info-modal" id="infoModal">
+        <div class="info-modal-content">
+            <button class="info-close-btn" id="closeInfoModal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div id="infoContent">
+                <!-- Content injected by JS -->
+            </div>
+            <button class="btn btn-secondary info-back-btn" id="infoBackBtn">Back to Download</button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">

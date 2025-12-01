@@ -3664,3 +3664,326 @@ body {
         height: 100px;
     }
 }
+
+/* ========================================
+   DEPENDENCY SELECTION MODAL
+   ======================================== */
+
+.dep-modal,
+.info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.dep-modal.open,
+.info-modal.open {
+    display: flex;
+}
+
+.dep-modal-content,
+.info-modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dep-close-btn,
+.info-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.dep-close-btn:hover,
+.info-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.dep-close-btn svg,
+.info-close-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.dep-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.dep-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.dep-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.dep-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.dep-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dep-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--accent-primary);
+}
+
+.dep-checkbox {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.dep-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.dep-checkbox .checkmark {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.dep-checkbox input:checked ~ .checkmark {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.dep-checkbox .checkmark::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 8px;
+    top: 4px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.dep-checkbox input:checked ~ .checkmark::after {
+    display: block;
+}
+
+.dep-info {
+    flex: 1;
+}
+
+.dep-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.dep-title span:first-child {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.dep-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dep-badge.recommended {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.dep-badge.optional {
+    background: rgba(156, 163, 175, 0.15);
+    color: #9ca3af;
+    border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.dep-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.dep-learn-more {
+    font-size: 0.8rem;
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.dep-learn-more:hover {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+.dep-footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.dep-size {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.dep-size span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dep-download-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Info Modal Styles */
+.info-modal-content {
+    max-width: 600px;
+}
+
+.info-modal-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-modal-content h3 .dep-badge {
+    font-size: 0.65rem;
+}
+
+.info-modal-content p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.info-modal-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.info-modal-content li {
+    padding: 8px 0;
+    padding-left: 24px;
+    position: relative;
+    color: var(--text-secondary);
+}
+
+.info-modal-content li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.info-back-btn {
+    margin-top: 20px;
+}
+
+/* Mobile styles for modal */
+@media (max-width: 480px) {
+    .dep-modal-content,
+    .info-modal-content {
+        padding: 24px 20px;
+        border-radius: 20px;
+        margin: 10px;
+    }
+
+    .dep-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .dep-item {
+        padding: 14px;
+    }
+
+    .dep-title {
+        flex-wrap: wrap;
+    }
+
+    .dep-badge {
+        font-size: 0.65rem;
+    }
+}

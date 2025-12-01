@@ -591,4 +591,201 @@ function initReviews() {
 // Initialize reviews on page load
 document.addEventListener('DOMContentLoaded', () => {
     initReviews();
+    initDependencyModal();
 });
+
+// ========================================
+// DEPENDENCY SELECTION MODAL
+// ========================================
+
+function initDependencyModal() {
+    const depModal = document.getElementById('depModal');
+    const infoModal = document.getElementById('infoModal');
+    const closeDepModal = document.getElementById('closeDepModal');
+    const closeInfoModal = document.getElementById('closeInfoModal');
+    const infoBackBtn = document.getElementById('infoBackBtn');
+    const depDownloadBtn = document.getElementById('depDownloadBtn');
+    const depSizeEl = document.getElementById('depSize');
+    const infoContent = document.getElementById('infoContent');
+
+    if (!depModal) return;
+
+    // Dependency sizes (approximate MB)
+    const depSizes = {
+        kokoro: 200,
+        whisper: 100,
+        yolo: 150,
+        piper: 80
+    };
+
+    // Base app size
+    const baseSize = 150;
+
+    // Dependency info content
+    const depInfo = {
+        kokoro: {
+            title: 'Kokoro TTS',
+            badge: 'recommended',
+            description: `Kokoro is a high-quality text-to-speech engine that gives your AI a natural, expressive voice. It runs entirely on your device with no internet required.`,
+            features: [
+                'Natural-sounding voice synthesis',
+                'Multiple voice options available',
+                'Adjustable speech speed',
+                'Runs offline - no API calls needed',
+                'Low latency for real-time conversations'
+            ]
+        },
+        whisper: {
+            title: 'Whisper STT',
+            badge: 'recommended',
+            description: `OpenAI's Whisper is a state-of-the-art speech recognition model that accurately transcribes your voice into text. The local version ensures your conversations stay private.`,
+            features: [
+                'Highly accurate speech recognition',
+                'Works with various accents and languages',
+                'Runs locally for privacy',
+                'Real-time transcription',
+                'No internet connection required'
+            ]
+        },
+        yolo: {
+            title: 'YOLO 11',
+            badge: 'recommended',
+            description: `YOLO (You Only Look Once) v11 is a cutting-edge real-time object detection model. It enables face tracking and vision features so your AI can see and respond to the world around you.`,
+            features: [
+                'Real-time face tracking',
+                'Object detection (80+ object types)',
+                'Distance estimation',
+                'Camera integration',
+                'Optimized for speed and accuracy'
+            ]
+        },
+        piper: {
+            title: 'Piper TTS',
+            badge: 'optional',
+            description: `Piper is a lightweight, open-source text-to-speech engine. It's a great alternative to Kokoro if you want a smaller download size or prefer a different voice style.`,
+            features: [
+                'Lightweight and fast',
+                'Open-source and customizable',
+                'Multiple voice models available',
+                'Lower resource usage',
+                'Good for older hardware'
+            ]
+        }
+    };
+
+    // Calculate and update size display
+    function updateSize() {
+        let total = baseSize;
+        if (document.getElementById('depKokoro').checked) total += depSizes.kokoro;
+        if (document.getElementById('depWhisper').checked) total += depSizes.whisper;
+        if (document.getElementById('depYolo').checked) total += depSizes.yolo;
+        if (document.getElementById('depPiper').checked) total += depSizes.piper;
+        depSizeEl.textContent = `~${total} MB`;
+    }
+
+    // Listen for checkbox changes
+    ['depKokoro', 'depWhisper', 'depYolo', 'depPiper'].forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) {
+            checkbox.addEventListener('change', updateSize);
+        }
+    });
+
+    // Open dependency modal instead of direct download
+    function openDepModal(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        depModal.classList.add('open');
+        updateSize();
+    }
+
+    // Close dependency modal
+    function closeDepModalFn() {
+        depModal.classList.remove('open');
+    }
+
+    // Show info modal
+    function showInfo(depKey) {
+        const info = depInfo[depKey];
+        if (!info) return;
+
+        infoContent.innerHTML = `
+            <h3>${info.title} <span class="dep-badge ${info.badge}">${info.badge}</span></h3>
+            <p>${info.description}</p>
+            <ul>
+                ${info.features.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+        `;
+
+        depModal.classList.remove('open');
+        infoModal.classList.add('open');
+    }
+
+    // Close info modal and go back
+    function closeInfoModalFn() {
+        infoModal.classList.remove('open');
+        depModal.classList.add('open');
+    }
+
+    // Handle download
+    function handleDownload() {
+        const platform = detectPlatform();
+        const downloadUrl = platforms[platform].download;
+
+        // For now, just download the main app
+        // In a real implementation, this would trigger a custom build
+        // or download separate dependency packages
+        window.location.href = downloadUrl;
+        closeDepModalFn();
+    }
+
+    // Event listeners
+    closeDepModal.addEventListener('click', closeDepModalFn);
+    closeInfoModal.addEventListener('click', closeInfoModalFn);
+    infoBackBtn.addEventListener('click', closeInfoModalFn);
+    depDownloadBtn.addEventListener('click', handleDownload);
+
+    // Close on background click
+    depModal.addEventListener('click', (e) => {
+        if (e.target === depModal) closeDepModalFn();
+    });
+    infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) closeInfoModalFn();
+    });
+
+    // Learn more links
+    document.querySelectorAll('.dep-learn-more').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const depKey = link.dataset.dep;
+            showInfo(depKey);
+        });
+    });
+
+    // Override download button clicks to show modal
+    const downloadBtn = document.getElementById('downloadBtn');
+    const heroDownloadBtn = document.getElementById('heroDownloadBtn');
+
+    if (downloadBtn) {
+        // Remove the default click behavior and show modal instead
+        downloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openDepModal();
+        });
+    }
+
+    if (heroDownloadBtn) {
+        heroDownloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openDepModal();
+        });
+    }
+
+    // Initial size calculation
+    updateSize();
+}
