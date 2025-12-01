@@ -46,16 +46,35 @@ function initDownloadDropdown() {
 
     // Set initial platform based on detection
     const detectedPlatform = detectPlatform();
-    const platformData = platforms[detectedPlatform];
+    let currentPlatform = detectedPlatform;
 
-    platformIcon.innerHTML = platformData.icon;
-    platformName.textContent = platformData.name;
-    downloadNote.textContent = platformData.note;
+    // Update UI for detected platform
+    function updatePlatformUI(platform) {
+        const data = platforms[platform];
+        platformIcon.innerHTML = data.icon;
+        platformName.textContent = data.name;
+        downloadNote.textContent = data.note;
+        currentPlatform = platform;
+    }
 
-    // Toggle dropdown
+    updatePlatformUI(detectedPlatform);
+
+    // Click on main button area (not dropdown arrow) triggers download
     btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('open');
+        const arrow = btn.querySelector('.dropdown-arrow');
+        const arrowRect = arrow.getBoundingClientRect();
+
+        // Check if click was on the dropdown arrow area
+        if (e.clientX >= arrowRect.left) {
+            // Click on arrow - toggle dropdown
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+        } else {
+            // Click on main button - trigger download
+            e.stopPropagation();
+            dropdown.classList.remove('open');
+            window.location.href = platforms[currentPlatform].download;
+        }
     });
 
     // Close dropdown when clicking outside
@@ -65,31 +84,17 @@ function initDownloadDropdown() {
         }
     });
 
-    // Handle dropdown item click
+    // Handle dropdown item click - download immediately
     menu.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', (e) => {
             const platform = item.dataset.platform;
-            const platformData = platforms[platform];
 
-            // Update button display
-            platformIcon.innerHTML = platformData.icon;
-            platformName.textContent = platformData.name;
-            downloadNote.textContent = platformData.note;
+            // Update button display for future clicks
+            updatePlatformUI(platform);
 
             // Close dropdown
             dropdown.classList.remove('open');
-
-            // Track download
-            console.log(`Download initiated for ${platformData.name}`);
         });
-    });
-
-    // Make main button also trigger download for detected platform
-    btn.addEventListener('dblclick', () => {
-        const link = document.createElement('a');
-        link.href = platformData.download;
-        link.download = '';
-        link.click();
     });
 }
 
