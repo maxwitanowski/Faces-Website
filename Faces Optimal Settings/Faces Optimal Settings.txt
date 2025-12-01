@@ -1,0 +1,76 @@
+Nuetral:
+	Eye Spacing: 75
+	Eye Y Position: -32
+	Eye Width: 40
+	Eye Height: 26
+	Pupil Size: 7
+	Brow Y Position: -83
+	Brow Length: 48
+	Brow Thickness: 4
+	Inner Angle Intensity: -10
+	Outer Angle Intensity: 14
+	Mouth Y Position: 58
+	Mouth Width: 55
+	Mouth Thickness: 4
+	Smile Curve Intensity: 58
+	Mouth Open Height: 51
+	Frown Corner Drop: 10
+	Line Thickness: 3
+	Max Face Scale: 1
+Happy
+	Eye Spacing: 75
+	Eye Y Position: -32
+	Eye Width: 40
+	Eye Height: 26
+	Pupil Size: 7
+	Brow Y Position: -83
+	Brow Length: 48
+	Brow Thickness: 4
+	Inner Angle Intensity: -27
+	Outer Angle Intensity: 3
+	Mouth Y Position: 58
+	Mouth Width: 58
+	Mouth Thickness: 4
+	Smile Curve Intensity: 51
+	Mouth Open Height: 51
+	Frown Corner Drop: 10
+	Line Thickness: 3
+	Max Face Scale: 1
+Sad
+	Eye Spacing: 75
+	Eye Y Position: -32
+	Eye Width: 40
+	Eye Height: 26
+	Pupil Size: 7
+	Brow Y Position: -83
+	Brow Length: 48
+	Brow Thickness: 4
+	Inner Angle Intensity: -10
+	Outer Angle Intensity: 3
+	Mouth Y Position: 58
+	Mouth Width: 67
+	Mouth Thickness: 4
+	Smile Curve Intensity: 35
+	Mouth Open Height: 60
+	Frown Corner Drop: 10
+	Line Thickness: 3
+	Max Face Scale: 1
+Angry	
+	Eye Spacing: 75
+	Eye Y Position: -32
+	Eye Width: 40
+	Eye Height: 26
+	Pupil Size: 7
+	Brow Y Position: -89
+	Brow Length: 48
+	Brow Thickness: 4
+	Inner Angle Intensity: -10
+	Outer Angle Intensity: 3
+	Mouth Y Position: 58
+	Mouth Width: 67
+	Mouth Thickness: 4
+	Smile Curve Intensity: 35
+	Mouth Open Height: 60
+	Frown Corner Drop: 10
+	Line Thickness: 3
+	Max Face Scale: 1

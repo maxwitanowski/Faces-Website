@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forums - Faces</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="images/app_logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/app_logo.png" alt="Faces Logo">
+                <span>Faces</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#showcase">Showcase</a></li>
+                <li><a href="index.html#settings">Settings</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="forum.html" class="active">Forums</a></li>
+                <li><a href="index.html#download" class="nav-download-btn">Download</a></li>
+            </ul>
+            <div class="nav-auth" id="authContainer">
+                <!-- Auth buttons or user menu will be inserted here -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Forum Landing (shown when no category selected) -->
+    <section class="forum-landing" id="forumLanding" style="display: none;">
+        <div class="container">
+            <div class="section-header" style="padding-top: 100px;">
+                <h2>Community <span class="gradient-text">Forums</span></h2>
+                <p>Connect with other Faces users, share tips, and get help</p>
+            </div>
+
+            <div class="forums-grid" id="forumsGrid">
+                <!-- Forum cards will be inserted by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Forum Header (shown when category selected) -->
+    <section class="forum-header" id="forumHeader" style="display: none;">
+        <div class="container">
+            <a href="forum.html" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Back to Forums
+            </a>
+            <div class="forum-title">
+                <div class="forum-title-icon" id="forumIcon">
+                    <!-- Icon inserted by JS -->
+                </div>
+                <div>
+                    <h1 id="forumTitle">Forum</h1>
+                    <p id="forumDescription">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forum Content (shown when category selected) -->
+    <section class="forum-content-section" id="forumContent" style="display: none;">
+        <div class="container">
+            <!-- Sorting and New Post Button -->
+            <div class="forum-toolbar">
+                <div class="sort-options">
+                    <span class="sort-label">Sort by:</span>
+                    <button class="sort-btn active" data-sort="recent">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Recent
+                    </button>
+                    <button class="sort-btn" data-sort="popular">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        Most Popular
+                    </button>
+                    <button class="sort-btn" data-sort="views">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Most Viewed
+                    </button>
+                </div>
+                <button class="btn btn-primary new-post-btn" id="newPostBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Post
+                </button>
+            </div>
+
+            <!-- New Post Form (hidden by default) -->
+            <div class="new-post-card" id="newPostCard" style="display: none;">
+                <div class="new-post-header">
+                    <h3>Create New Post</h3>
+                    <button class="close-btn" id="closeNewPost">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="newPostForm">
+                    <input type="text" id="postTitle" placeholder="Post Title" required maxlength="100">
+                    <textarea id="postContent" placeholder="Write your post..." rows="4" required maxlength="2000"></textarea>
+
+                    <!-- Image Upload -->
+                    <div class="image-upload-section">
+                        <label class="image-upload-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            Add Image
+                            <input type="file" id="postImage" accept="image/*" style="display: none;">
+                        </label>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview">
+                            <button type="button" class="remove-image-btn" id="removeImage">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <span class="char-count"><span id="postCharCount">0</span>/2000</span>
+                        <div class="form-buttons">
+                            <button type="button" class="btn btn-secondary" id="cancelNewPost">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Posts List -->
+            <div class="posts-list" id="postsList">
+                <!-- Posts will be loaded here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="posts-empty" id="postsEmpty">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <h3>No Posts Yet</h3>
+                <p>Be the first to start a discussion!</p>
+                <button class="btn btn-primary" id="emptyNewPostBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Create First Post
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="images/app_logo.png" alt="Faces Logo">
+                    <span>Faces</span>
+                </div>
+                <p class="footer-tagline">AI Voice Assistant with a Face</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Faces. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Forum categories config
+        const categories = {
+            general: {
+                title: 'General Discussion',
+                description: 'Talk about anything related to Faces, share your experiences, and connect with the community.',
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+                colorClass: ''
+            },
+            help: {
+                title: 'Help & Support',
+                description: 'Get help with installation, troubleshooting, and technical issues from the community.',
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+                colorClass: 'help'
+            },
+            features: {
+                title: 'Feature Requests',
+                description: 'Suggest new features, vote on ideas, and help shape the future of Faces.',
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>',
+                colorClass: 'ideas'
+            },
+            announcements: {
+                title: 'Announcements',
+                description: 'Stay updated with the latest news, updates, and announcements from Max.',
+                icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>',
+                colorClass: 'announcements'
+            }
+        };
+
+        // Get category from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        let currentSort = 'recent';
+        let postImageData = null;
+
+        // Check if user is creator (uses AUTH from auth.js)
+        function isCreator(email) {
+            return AUTH.isCreator(email);
+        }
+
+        // Check if current user can delete posts (is creator/admin)
+        function canDelete() {
+            return AUTH.isCurrentUserCreator();
+        }
+
+        // Get current user
+        function getCurrentUser() {
+            return AUTH.getCurrentUser();
+        }
+
+        // Get post count for a category
+        function getPostCount(cat) {
+            const posts = localStorage.getItem(`forum_${cat}`);
+            return posts ? JSON.parse(posts).length : 0;
+        }
+
+        // Show landing page or category view
+        if (!category) {
+            // Show forum landing page
+            document.getElementById('forumLanding').style.display = 'block';
+            document.getElementById('forumHeader').style.display = 'none';
+            document.getElementById('forumContent').style.display = 'none';
+            document.title = 'Forums - Faces';
+
+            // Render forum cards
+            const forumsGrid = document.getElementById('forumsGrid');
+            forumsGrid.innerHTML = Object.entries(categories).map(([key, cat]) => `
+                <a href="forum.html?category=${key}" class="forum-card">
+                    <div class="forum-icon ${cat.colorClass}">
+                        ${cat.icon}
+                    </div>
+                    <div class="forum-content">
+                        <h3>${cat.title}</h3>
+                        <p>${cat.description}</p>
+                        <div class="forum-stats">
+                            <span>${getPostCount(key)} posts</span>
+                        </div>
+                    </div>
+                    <svg class="forum-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </a>
+            `).join('');
+        } else {
+            // Show category view
+            document.getElementById('forumLanding').style.display = 'none';
+            document.getElementById('forumHeader').style.display = 'block';
+            document.getElementById('forumContent').style.display = 'block';
+
+            const categoryData = categories[category] || categories.general;
+
+            // Update page header
+            document.title = `${categoryData.title} - Faces Forums`;
+            document.getElementById('forumTitle').textContent = categoryData.title;
+            document.getElementById('forumDescription').textContent = categoryData.description;
+            document.getElementById('forumIcon').innerHTML = categoryData.icon;
+            document.getElementById('forumIcon').className = 'forum-title-icon ' + categoryData.colorClass;
+        }
+
+        // Only run post-related code if a category is selected
+        if (category) {
+            // Load posts from localStorage
+            function getPosts() {
+                const posts = localStorage.getItem(`forum_${category}`);
+                return posts ? JSON.parse(posts) : [];
+            }
+
+            function savePosts(posts) {
+                localStorage.setItem(`forum_${category}`, JSON.stringify(posts));
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+
+                if (diff < 60000) return 'Just now';
+                if (diff < 3600000) return Math.floor(diff / 60000) + ' minutes ago';
+                if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
+                if (diff < 604800000) return Math.floor(diff / 86400000) + ' days ago';
+
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function sortPosts(posts, sortType) {
+                const sorted = [...posts];
+                switch(sortType) {
+                    case 'popular':
+                        return sorted.sort((a, b) => ((b.likes || 0) + (b.replies?.length || 0)) - ((a.likes || 0) + (a.replies?.length || 0)));
+                    case 'views':
+                        return sorted.sort((a, b) => (b.views || 0) - (a.views || 0));
+                    case 'recent':
+                    default:
+                        return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+            }
+
+            function renderPosts() {
+                let posts = getPosts();
+                posts = sortPosts(posts, currentSort);
+
+                const postsList = document.getElementById('postsList');
+                const postsEmpty = document.getElementById('postsEmpty');
+
+                if (posts.length === 0) {
+                    postsList.style.display = 'none';
+                    postsEmpty.style.display = 'block';
+                    return;
+                }
+
+                postsList.style.display = 'block';
+                postsEmpty.style.display = 'none';
+
+                const currentUser = getCurrentUser();
+                const userCanDelete = canDelete();
+
+                postsList.innerHTML = posts.map((post, index) => {
+                    // Find original index for data operations
+                    const originalPosts = getPosts();
+                    const originalIndex = originalPosts.findIndex(p => p.date === post.date && p.title === post.title);
+                    const postIsCreator = post.userEmail && isCreator(post.userEmail);
+
+                    return `
+                    <div class="post-card ${postIsCreator ? 'creator-post' : ''}" data-index="${originalIndex}">
+                        <div class="post-header">
+                            <div class="post-author-avatar ${postIsCreator ? 'creator-avatar' : ''}">${post.author.substring(0, 2).toUpperCase()}</div>
+                            <div class="post-meta">
+                                <span class="post-author-name">
+                                    ${escapeHtml(post.author)}
+                                    ${postIsCreator ? '<span class="creator-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Creator</span>' : ''}
+                                </span>
+                                <span class="post-date">${formatDate(post.date)}</span>
+                            </div>
+                            <div class="post-stats">
+                                <span class="stat-item" title="Views">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    ${post.views || 0}
+                                </span>
+                                <span class="stat-item" title="Likes">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                    </svg>
+                                    ${post.likes || 0}
+                                </span>
+                                ${userCanDelete ? `
+                                <button class="delete-btn" onclick="deletePost(${originalIndex})" title="Delete post">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>` : ''}
+                            </div>
+                        </div>
+                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                        <p class="post-content">${escapeHtml(post.content)}</p>
+                        ${post.image ? `<div class="post-image"><img src="${post.image}" alt="Post image" onclick="openImageModal('${post.image}')"></div>` : ''}
+                        <div class="post-actions">
+                            <button class="action-btn like-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${originalIndex})">
+                                <svg viewBox="0 0 24 24" fill="${post.liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                </svg>
+                                Like
+                            </button>
+                            <button class="action-btn reply-btn" onclick="toggleReplyForm(${originalIndex})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                Reply (${post.replies ? post.replies.length : 0})
+                            </button>
+                        </div>
+                        <div class="replies-section" id="replies-${originalIndex}" style="display: none;">
+                            <div class="replies-list">
+                                ${(post.replies || []).map((reply, replyIndex) => {
+                                    const replyIsCreator = reply.userEmail && isCreator(reply.userEmail);
+                                    return `
+                                    <div class="reply-card ${replyIsCreator ? 'creator-reply' : ''}">
+                                        <div class="reply-header">
+                                            <div class="reply-author-avatar ${replyIsCreator ? 'creator-avatar' : ''}">${reply.author.substring(0, 2).toUpperCase()}</div>
+                                            <div class="reply-meta">
+                                                <span class="reply-author-name">
+                                                    ${escapeHtml(reply.author)}
+                                                    ${replyIsCreator ? '<span class="creator-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Creator</span>' : ''}
+                                                </span>
+                                                <span class="reply-date">${formatDate(reply.date)}</span>
+                                            </div>
+                                            ${userCanDelete ? `
+                                            <button class="delete-btn small" onclick="deleteReply(${originalIndex}, ${replyIndex})" title="Delete reply">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                </svg>
+                                            </button>` : ''}
+                                        </div>
+                                        <p class="reply-content">${escapeHtml(reply.content)}</p>
+                                        ${reply.image ? `<div class="reply-image"><img src="${reply.image}" alt="Reply image" onclick="openImageModal('${reply.image}')"></div>` : ''}
+                                    </div>
+                                `}).join('')}
+                            </div>
+                            ${currentUser ? `
+                            <form class="reply-form" id="reply-form-${originalIndex}" onsubmit="submitReply(event, ${originalIndex})">
+                                <textarea placeholder="Write a reply..." required maxlength="1000" class="reply-content-input"></textarea>
+                                <div class="reply-image-upload">
+                                    <label class="image-upload-btn small">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                        <input type="file" accept="image/*" class="reply-image-input" style="display: none;">
+                                    </label>
+                                    <div class="reply-image-preview" style="display: none;">
+                                        <img src="" alt="Preview">
+                                        <button type="button" class="remove-reply-image">×</button>
+                                    </div>
+                                </div>
+                                <div class="reply-form-buttons">
+                                    <button type="button" class="btn btn-secondary btn-small" onclick="cancelReply(${originalIndex})">Cancel</button>
+                                    <button type="submit" class="btn btn-primary btn-small">Reply</button>
+                                </div>
+                            </form>` : `
+                            <div class="login-to-reply">
+                                <p>Sign in to reply to this post</p>
+                                <button class="btn btn-primary btn-small" onclick="AuthUI.showAuthModal('signin')">Sign In</button>
+                            </div>`}
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Increment view count for displayed posts
+                incrementViews();
+            }
+
+            function incrementViews() {
+                // Only increment once per session per post
+                const viewedKey = `viewed_${category}_${Date.now()}`;
+                if (sessionStorage.getItem(viewedKey)) return;
+
+                const posts = getPosts();
+                if (posts.length > 0) {
+                    posts[0].views = (posts[0].views || 0) + 1;
+                    savePosts(posts);
+                    sessionStorage.setItem(viewedKey, 'true');
+                }
+            }
+
+            window.toggleLike = function(index) {
+                const posts = getPosts();
+                if (!posts[index].liked) {
+                    posts[index].likes = (posts[index].likes || 0) + 1;
+                    posts[index].liked = true;
+                } else {
+                    posts[index].likes = Math.max(0, (posts[index].likes || 1) - 1);
+                    posts[index].liked = false;
+                }
+                savePosts(posts);
+                renderPosts();
+            }
+
+            window.toggleReplyForm = function(index) {
+                const section = document.getElementById(`replies-${index}`);
+                const isHidden = section.style.display === 'none';
+                section.style.display = isHidden ? 'block' : 'none';
+
+                // Increment view when opening replies
+                if (isHidden) {
+                    const posts = getPosts();
+                    posts[index].views = (posts[index].views || 0) + 1;
+                    savePosts(posts);
+                }
+            }
+
+            window.cancelReply = function(index) {
+                const section = document.getElementById(`replies-${index}`);
+                const form = document.getElementById(`reply-form-${index}`);
+                if (form) {
+                    form.reset();
+                    const preview = form.querySelector('.reply-image-preview');
+                    if (preview) {
+                        preview.style.display = 'none';
+                        preview.querySelector('img').src = '';
+                    }
+                }
+                section.style.display = 'none';
+            }
+
+            window.submitReply = function(event, postIndex) {
+                event.preventDefault();
+
+                const user = getCurrentUser();
+                if (!user) {
+                    AuthUI.showAuthModal('signin');
+                    return;
+                }
+
+                const form = event.target;
+                const content = form.querySelector('.reply-content-input').value.trim();
+                const imagePreview = form.querySelector('.reply-image-preview img');
+                const image = imagePreview && imagePreview.src && imagePreview.src !== window.location.href ? imagePreview.src : null;
+
+                if (!content) return;
+
+                const posts = getPosts();
+                if (!posts[postIndex].replies) {
+                    posts[postIndex].replies = [];
+                }
+                posts[postIndex].replies.push({
+                    author: user.name,
+                    userEmail: user.email,
+                    userId: user.id,
+                    content,
+                    image,
+                    date: new Date().toISOString()
+                });
+                savePosts(posts);
+                renderPosts();
+
+                // Re-open the replies section
+                setTimeout(() => {
+                    document.getElementById(`replies-${postIndex}`).style.display = 'block';
+                }, 10);
+            }
+
+            // Delete post (admin only)
+            window.deletePost = function(index) {
+                if (!canDelete()) return;
+                if (!confirm('Are you sure you want to delete this post?')) return;
+
+                const posts = getPosts();
+                posts.splice(index, 1);
+                savePosts(posts);
+                renderPosts();
+            }
+
+            // Delete reply (admin only)
+            window.deleteReply = function(postIndex, replyIndex) {
+                if (!canDelete()) return;
+                if (!confirm('Are you sure you want to delete this reply?')) return;
+
+                const posts = getPosts();
+                posts[postIndex].replies.splice(replyIndex, 1);
+                savePosts(posts);
+                renderPosts();
+
+                // Re-open the replies section
+                setTimeout(() => {
+                    document.getElementById(`replies-${postIndex}`).style.display = 'block';
+                }, 10);
+            }
+
+            window.openImageModal = function(src) {
+                const modal = document.createElement('div');
+                modal.className = 'image-modal';
+                modal.innerHTML = `
+                    <div class="image-modal-content">
+                        <img src="${src}" alt="Full size image">
+                        <button class="close-modal">&times;</button>
+                    </div>
+                `;
+                modal.onclick = (e) => {
+                    if (e.target === modal || e.target.className === 'close-modal') {
+                        modal.remove();
+                    }
+                };
+                document.body.appendChild(modal);
+            }
+
+            // New post button handlers
+            const newPostBtn = document.getElementById('newPostBtn');
+            const emptyNewPostBtn = document.getElementById('emptyNewPostBtn');
+            const newPostCard = document.getElementById('newPostCard');
+            const closeNewPost = document.getElementById('closeNewPost');
+            const cancelNewPost = document.getElementById('cancelNewPost');
+
+            function showNewPostForm() {
+                const user = getCurrentUser();
+                if (!user) {
+                    AuthUI.showAuthModal('signin');
+                    return;
+                }
+                newPostCard.style.display = 'block';
+                newPostCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function hideNewPostForm() {
+                newPostCard.style.display = 'none';
+                document.getElementById('newPostForm').reset();
+                document.getElementById('postCharCount').textContent = '0';
+                document.getElementById('imagePreview').style.display = 'none';
+                postImageData = null;
+            }
+
+            newPostBtn.addEventListener('click', showNewPostForm);
+            emptyNewPostBtn.addEventListener('click', showNewPostForm);
+
+            // Re-render posts when auth changes
+            window.addEventListener('authChanged', () => {
+                renderPosts();
+                AuthUI.updateUI();
+            });
+            closeNewPost.addEventListener('click', hideNewPostForm);
+            cancelNewPost.addEventListener('click', hideNewPostForm);
+
+            // Image upload handling
+            const postImageInput = document.getElementById('postImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const removeImageBtn = document.getElementById('removeImage');
+
+            postImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        postImageData = e.target.result;
+                        previewImg.src = postImageData;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            removeImageBtn.addEventListener('click', function() {
+                postImageData = null;
+                previewImg.src = '';
+                imagePreview.style.display = 'none';
+                postImageInput.value = '';
+            });
+
+            // Reply image upload handling (delegated)
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('reply-image-input')) {
+                    const file = e.target.files[0];
+                    const form = e.target.closest('form');
+                    const preview = form.querySelector('.reply-image-preview');
+                    const img = preview.querySelector('img');
+
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            img.src = ev.target.result;
+                            preview.style.display = 'flex';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-reply-image')) {
+                    const form = e.target.closest('form');
+                    const preview = form.querySelector('.reply-image-preview');
+                    const img = preview.querySelector('img');
+                    const input = form.querySelector('.reply-image-input');
+
+                    img.src = '';
+                    preview.style.display = 'none';
+                    input.value = '';
+                }
+            });
+
+            // Sort buttons
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSort = this.dataset.sort;
+                    renderPosts();
+                });
+            });
+
+            // New post form submission
+            document.getElementById('newPostForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const user = getCurrentUser();
+                if (!user) {
+                    AuthUI.showAuthModal('signin');
+                    return;
+                }
+
+                const title = document.getElementById('postTitle').value.trim();
+                const content = document.getElementById('postContent').value.trim();
+
+                if (!title || !content) return;
+
+                const posts = getPosts();
+                posts.unshift({
+                    author: user.name,
+                    userEmail: user.email,
+                    userId: user.id,
+                    title,
+                    content,
+                    image: postImageData,
+                    date: new Date().toISOString(),
+                    replies: [],
+                    views: 0,
+                    likes: 0,
+                    liked: false
+                });
+                savePosts(posts);
+
+                hideNewPostForm();
+                renderPosts();
+            });
+
+            // Character count
+            document.getElementById('postContent').addEventListener('input', function() {
+                document.getElementById('postCharCount').textContent = this.value.length;
+            });
+
+            // Initial render
+            renderPosts();
+        }
+    </script>
+</body>
+</html>
