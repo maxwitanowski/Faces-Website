@@ -845,16 +845,51 @@ body {
     color: #ff9500;
 }
 
-.macos-warning code {
-    display: block;
+.macos-warning .code-copy-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: rgba(0, 0, 0, 0.3);
     padding: 8px 12px;
     border-radius: 6px;
+    margin: 8px 0;
+}
+
+.macos-warning code {
+    flex: 1;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
     font-family: monospace;
     font-size: 0.8rem;
     color: #a5d6ff;
-    margin: 8px 0;
+    margin: 0;
     word-break: break-all;
+}
+
+.macos-warning .copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.macos-warning .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.macos-warning .copy-btn.copied {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #22c55e;
 }
 
 .macos-warning small {

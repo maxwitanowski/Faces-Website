@@ -41,13 +41,13 @@
                     or run locally. Watch as your AI companion expresses emotions in real-time.
                 </p>
                 <div class="hero-buttons">
-                    <a href="#download" class="btn btn-primary">
+                    <a href="#download" class="btn btn-primary" id="heroDownloadBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
-                        Download for Windows
+                        <span id="heroDownloadText">Download for Windows</span>
                     </a>
                     <a href="#features" class="btn btn-secondary">Learn More</a>
                 </div>
@@ -448,8 +448,16 @@
                     <p class="download-note" id="downloadNote">Windows 10/11 required</p>
                     <div class="macos-warning" id="macosWarning" style="display: none;">
                         <p><strong>macOS Users:</strong> If you see "app is damaged", open Terminal and run:</p>
-                        <code>xattr -cr ~/Downloads/Faces\ AI.app</code>
-                        <p><small>This happens because the app isn't signed with a paid Apple Developer license.</small></p>
+                        <div class="code-copy-container">
+                            <code id="macosCommand">xattr -cr /path/to/Faces\ AI.app</code>
+                            <button class="copy-btn" id="copyMacosCmd" title="Copy to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p><small>Replace the path with your actual app location. This is needed because the app isn't signed with a paid Apple Developer license.</small></p>
                     </div>
                 </div>
                 <div class="download-visual">

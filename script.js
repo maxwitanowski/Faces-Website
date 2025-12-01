@@ -42,14 +42,41 @@ function initDownloadDropdown() {
     const platformName = document.getElementById('platformName');
     const downloadNote = document.getElementById('downloadNote');
 
-    if (!dropdown || !btn) return;
-
     // Set initial platform based on detection
     const detectedPlatform = detectPlatform();
     let currentPlatform = detectedPlatform;
 
+    // Update hero download button text based on platform
+    const heroDownloadText = document.getElementById('heroDownloadText');
+    if (heroDownloadText) {
+        heroDownloadText.textContent = `Download for ${platforms[detectedPlatform].name}`;
+    }
+
     // macOS warning element
     const macosWarning = document.getElementById('macosWarning');
+
+    // macOS copy button functionality
+    const copyMacosCmd = document.getElementById('copyMacosCmd');
+    const macosCommand = document.getElementById('macosCommand');
+    if (copyMacosCmd && macosCommand) {
+        copyMacosCmd.addEventListener('click', () => {
+            const commandText = macosCommand.textContent;
+            navigator.clipboard.writeText(commandText).then(() => {
+                // Show copied feedback
+                const originalTitle = copyMacosCmd.title;
+                copyMacosCmd.title = 'Copied!';
+                copyMacosCmd.classList.add('copied');
+                setTimeout(() => {
+                    copyMacosCmd.title = originalTitle;
+                    copyMacosCmd.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        });
+    }
+
+    if (!dropdown || !btn) return;
 
     // Update UI for detected platform
     function updatePlatformUI(platform) {
