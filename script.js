@@ -426,9 +426,55 @@ function initReviews() {
     };
 
     // Render reviews
+    // Update overall rating display
+    function updateReviewStats(reviews) {
+        const overallRatingEl = document.getElementById('overallRating');
+        const overallStarsEl = document.getElementById('overallStars');
+        const reviewCountEl = document.getElementById('reviewCount');
+        const reviewsStatsEl = document.getElementById('reviewsStats');
+
+        if (!overallRatingEl || !reviewCountEl) return;
+
+        if (reviews.length === 0) {
+            if (reviewsStatsEl) reviewsStatsEl.style.display = 'none';
+            return;
+        }
+
+        if (reviewsStatsEl) reviewsStatsEl.style.display = 'flex';
+
+        // Calculate average rating
+        const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+        const avgRating = totalRating / reviews.length;
+
+        // Update rating number
+        overallRatingEl.textContent = avgRating.toFixed(1);
+
+        // Update stars
+        if (overallStarsEl) {
+            const stars = overallStarsEl.querySelectorAll('span');
+            stars.forEach((star, i) => {
+                const starNum = i + 1;
+                if (avgRating >= starNum) {
+                    star.className = 'filled';
+                } else if (avgRating >= starNum - 0.5) {
+                    star.className = 'half';
+                } else {
+                    star.className = '';
+                }
+            });
+        }
+
+        // Update review count
+        const countText = reviews.length === 1 ? '1 review' : `${reviews.length} reviews`;
+        reviewCountEl.textContent = countText;
+    }
+
     async function renderReviews() {
         const reviews = await fetchReviews();
         const userCanDelete = canDelete();
+
+        // Update stats
+        updateReviewStats(reviews);
 
         if (reviews.length === 0) {
             reviewsGrid.style.display = 'none';
@@ -783,3 +829,23 @@ function initDependencyModal() {
     // Initial size calculation
     updateSize();
 }
+
+// ========================================
+// OLDER VERSIONS TOGGLE
+// ========================================
+
+function initOlderVersions() {
+    const toggle = document.getElementById('olderVersionsToggle');
+    const container = toggle?.closest('.older-versions');
+
+    if (!toggle || !container) return;
+
+    toggle.addEventListener('click', () => {
+        container.classList.toggle('open');
+    });
+}
+
+// Initialize older versions on page load
+document.addEventListener('DOMContentLoaded', () => {
+    initOlderVersions();
+});

@@ -459,6 +459,29 @@
                         </div>
                         <p><small>This is needed because the app isn't signed with a paid Apple Developer license.</small></p>
                     </div>
+
+                    <!-- Older Versions -->
+                    <div class="older-versions">
+                        <button class="older-versions-toggle" id="olderVersionsToggle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Older Versions</span>
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="older-versions-list" id="olderVersionsList">
+                            <p class="no-older-versions">No older versions available yet. Check back after future updates!</p>
+                            <!-- Future versions will be added here like:
+                            <a href="#" class="version-item">
+                                <span class="version-name">v0.9.0</span>
+                                <span class="version-date">Nov 15, 2025</span>
+                            </a>
+                            -->
+                        </div>
+                    </div>
                 </div>
                 <div class="download-visual">
                     <img src="images/funny big smile.png" alt="Faces App">
@@ -519,6 +542,15 @@
             <div class="section-header">
                 <h2>User <span class="gradient-text">Reviews</span></h2>
                 <p>See what people are saying about Faces</p>
+                <div class="reviews-stats" id="reviewsStats">
+                    <div class="overall-rating">
+                        <span class="rating-number" id="overallRating">0.0</span>
+                        <div class="rating-stars" id="overallStars">
+                            <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                        </div>
+                    </div>
+                    <span class="review-count" id="reviewCount">0 reviews</span>
+                </div>
             </div>
 
             <div class="reviews-container">
