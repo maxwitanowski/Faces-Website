@@ -157,7 +157,7 @@ app.post('/api/auth/signin', async (req, res) => {
 // Posts Routes
 app.get('/api/posts', async (req, res) => {
     try {
-        const { category, sort } = req.query;
+        const { category, sort, userId } = req.query;
         let query = 'SELECT * FROM posts';
         const params = [];
 
@@ -176,10 +176,18 @@ app.get('/api/posts', async (req, res) => {
 
         const result = await pool.query(query, params);
 
-        // Get replies for each post
+        // Get user's likes if userId provided
+        let userLikes = [];
+        if (userId) {
+            const likesResult = await pool.query('SELECT post_id FROM post_likes WHERE user_id = $1', [userId]);
+            userLikes = likesResult.rows.map(r => r.post_id);
+        }
+
+        // Get replies for each post and mark if user liked it
         for (let post of result.rows) {
             const replies = await pool.query('SELECT * FROM replies WHERE post_id = $1 ORDER BY created_at ASC', [post.id]);
             post.replies = replies.rows;
+            post.userLiked = userLikes.includes(post.id);
         }
 
         res.json(result.rows);

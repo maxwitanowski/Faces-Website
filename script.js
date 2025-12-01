@@ -1,4 +1,6 @@
 // Platform Detection
+let selectedPlatform = null; // Track the currently selected platform
+
 const platforms = {
     windows: {
         name: 'Windows',
@@ -85,6 +87,13 @@ function initDownloadDropdown() {
         platformName.textContent = data.name;
         downloadNote.textContent = data.note;
         currentPlatform = platform;
+        selectedPlatform = platform; // Update global selected platform
+
+        // Update hero download button text
+        const heroDownloadText = document.getElementById('heroDownloadText');
+        if (heroDownloadText) {
+            heroDownloadText.textContent = `Download for ${data.name}`;
+        }
 
         // Show/hide macOS warning
         if (macosWarning) {
@@ -783,7 +792,8 @@ function initDependencyModal() {
 
     // Handle download
     function handleDownload() {
-        const platform = detectPlatform();
+        // Use the selected platform, or detect if not set
+        const platform = selectedPlatform || detectPlatform();
         const downloadUrl = platforms[platform].download;
 
         // For now, just download the main app

@@ -312,7 +312,12 @@
             // Fetch posts from API
             async function fetchPosts() {
                 try {
-                    const response = await fetch(`${API_URL}/api/posts?category=${category}&sort=${currentSort}`);
+                    const user = getCurrentUser();
+                    let url = `${API_URL}/api/posts?category=${category}&sort=${currentSort}`;
+                    if (user) {
+                        url += `&userId=${user.id}`;
+                    }
+                    const response = await fetch(url);
                     postsCache = await response.json();
                     return postsCache;
                 } catch (err) {
@@ -399,11 +404,11 @@
                         <p class="post-content">${escapeHtml(post.content)}</p>
                         ${post.image ? `<div class="post-image"><img src="${post.image}" alt="Post image" onclick="openImageModal(this.src)"></div>` : ''}
                         <div class="post-actions">
-                            <button class="action-btn like-btn" onclick="toggleLike(${post.id})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <button class="action-btn like-btn ${post.userLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})" data-post-id="${post.id}">
+                                <svg viewBox="0 0 24 24" fill="${post.userLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
                                     <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
                                 </svg>
-                                Like
+                                ${post.userLiked ? 'Liked' : 'Like'} (${post.likes || 0})
                             </button>
                             <button class="action-btn reply-btn" onclick="toggleReplyForm(${post.id})">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -478,15 +483,61 @@
                     return;
                 }
 
+                // Find the like button and update it optimistically
+                const likeBtn = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
+                if (!likeBtn) return;
+
+                const isCurrentlyLiked = likeBtn.classList.contains('liked');
+                const currentLikes = parseInt(likeBtn.textContent.match(/\d+/)?.[0] || '0');
+
+                // Optimistic update
+                if (isCurrentlyLiked) {
+                    likeBtn.classList.remove('liked');
+                    likeBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        Like (${Math.max(0, currentLikes - 1)})
+                    `;
+                } else {
+                    likeBtn.classList.add('liked');
+                    likeBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        Liked (${currentLikes + 1})
+                    `;
+                }
+
+                // Also update the stat-item likes count in header
+                const postCard = likeBtn.closest('.post-card');
+                const statLikes = postCard?.querySelector('.stat-item[title="Likes"]');
+                if (statLikes) {
+                    const newCount = isCurrentlyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+                    statLikes.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        ${newCount}
+                    `;
+                }
+
                 try {
-                    await fetch(`${API_URL}/api/posts/${postId}/like`, {
+                    const response = await fetch(`${API_URL}/api/posts/${postId}/like`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId: user.id })
                     });
-                    renderPosts();
+                    const result = await response.json();
+
+                    // If server response differs from our optimistic update, refresh
+                    if (result.liked !== !isCurrentlyLiked) {
+                        renderPosts();
+                    }
                 } catch (err) {
                     console.error('Error liking post:', err);
+                    // Revert on error
+                    renderPosts();
                 }
             }
 
