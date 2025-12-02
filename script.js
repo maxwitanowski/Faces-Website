@@ -796,9 +796,17 @@ function initDependencyModal() {
         const platform = selectedPlatform || detectPlatform();
         const downloadUrl = platforms[platform].download;
 
-        // For now, just download the main app
-        // In a real implementation, this would trigger a custom build
-        // or download separate dependency packages
+        // Save dependency preferences to localStorage
+        // The app will read these on first run and download accordingly
+        const depPrefs = {
+            kokoro: document.getElementById('depKokoro').checked,
+            whisper: document.getElementById('depWhisper').checked,
+            yolo: document.getElementById('depYolo').checked,
+            piper: document.getElementById('depPiper').checked
+        };
+        localStorage.setItem('faces_dep_preferences', JSON.stringify(depPrefs));
+
+        // Download the main app
         window.location.href = downloadUrl;
         closeDepModalFn();
     }

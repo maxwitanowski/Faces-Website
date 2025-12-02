@@ -5,17 +5,28 @@ const AUTH = {
     // Creator/Admin email
     CREATOR_EMAIL: 'maxwitanowski@gmail.com',
 
-    // Get current logged in user from sessionStorage
+    // Get current logged in user from localStorage (persistent) or sessionStorage
     getCurrentUser() {
-        const user = sessionStorage.getItem('faces_current_user');
+        // Check localStorage first (persistent), then sessionStorage
+        let user = localStorage.getItem('faces_current_user');
+        if (!user) {
+            user = sessionStorage.getItem('faces_current_user');
+        }
         return user ? JSON.parse(user) : null;
     },
 
-    // Set current user
-    setCurrentUser(user) {
+    // Set current user (rememberMe determines storage type)
+    setCurrentUser(user, rememberMe = true) {
         if (user) {
-            sessionStorage.setItem('faces_current_user', JSON.stringify(user));
+            if (rememberMe) {
+                localStorage.setItem('faces_current_user', JSON.stringify(user));
+                sessionStorage.removeItem('faces_current_user');
+            } else {
+                sessionStorage.setItem('faces_current_user', JSON.stringify(user));
+                localStorage.removeItem('faces_current_user');
+            }
         } else {
+            localStorage.removeItem('faces_current_user');
             sessionStorage.removeItem('faces_current_user');
         }
     },
@@ -32,7 +43,7 @@ const AUTH = {
     },
 
     // Sign up new user
-    async signUp(name, email, password) {
+    async signUp(name, email, password, rememberMe = true) {
         try {
             const response = await fetch(`${API_URL}/api/auth/signup`, {
                 method: 'POST',
@@ -46,7 +57,7 @@ const AUTH = {
                 return { success: false, error: data.error };
             }
 
-            this.setCurrentUser(data.user);
+            this.setCurrentUser(data.user, rememberMe);
             return { success: true, user: data.user };
         } catch (err) {
             console.error('Signup error:', err);
@@ -55,7 +66,7 @@ const AUTH = {
     },
 
     // Sign in existing user
-    async signIn(email, password) {
+    async signIn(email, password, rememberMe = true) {
         try {
             const response = await fetch(`${API_URL}/api/auth/signin`, {
                 method: 'POST',
@@ -69,7 +80,7 @@ const AUTH = {
                 return { success: false, error: data.error };
             }
 
-            this.setCurrentUser(data.user);
+            this.setCurrentUser(data.user, rememberMe);
             return { success: true, user: data.user };
         } catch (err) {
             console.error('Signin error:', err);
@@ -126,6 +137,12 @@ const AuthUI = {
                     <div class="auth-input-group">
                         <label for="authPassword">Password</label>
                         <input type="password" id="authPassword" placeholder="••••••••" required minlength="6">
+                    </div>
+                    <div class="auth-remember">
+                        <label class="auth-checkbox-label">
+                            <input type="checkbox" id="authRemember" checked>
+                            <span class="auth-checkbox-text">Remember me</span>
+                        </label>
                     </div>
                     <div class="auth-error" id="authError" style="display: none;"></div>
                     <button type="submit" class="btn btn-primary auth-submit-btn">
@@ -201,6 +218,7 @@ const AuthUI = {
         const mode = modal.dataset.mode;
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
+        const rememberMe = document.getElementById('authRemember').checked;
         const errorEl = document.getElementById('authError');
         const submitBtn = document.querySelector('.auth-submit-btn');
 
@@ -219,9 +237,9 @@ const AuthUI = {
                 submitBtn.textContent = 'Sign Up';
                 return;
             }
-            result = await AUTH.signUp(name, email, password);
+            result = await AUTH.signUp(name, email, password, rememberMe);
         } else {
-            result = await AUTH.signIn(email, password);
+            result = await AUTH.signIn(email, password, rememberMe);
         }
 
         if (result.success) {

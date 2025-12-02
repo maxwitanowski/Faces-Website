@@ -738,7 +738,7 @@ body {
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
-    background: var(--bg-card);
+    background: #1a1a24;
     border: 1px solid var(--border-color);
     border-radius: 12px;
     opacity: 0;
@@ -748,7 +748,8 @@ body {
     z-index: 100;
     min-width: 220px;
     max-height: none;
-    overflow: visible;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .download-dropdown.open .dropdown-menu {
@@ -765,10 +766,22 @@ body {
     color: var(--text-primary);
     text-decoration: none;
     transition: background 0.2s ease;
+    width: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: left;
 }
 
 .dropdown-item:hover {
-    background: var(--bg-card-hover);
+    background: #22222e;
+}
+
+.dropdown-item:focus {
+    outline: none;
+    background: #22222e;
 }
 
 .dropdown-item svg {
@@ -3148,6 +3161,30 @@ body {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.auth-remember {
+    margin-bottom: 16px;
+}
+
+.auth-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auth-checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.auth-checkbox-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
 }
 
 .auth-error {
